@@ -1,2 +1,8 @@
 # DRLexercises
-more small DRL exercises 
+
+exercises and projects originated from Udacity Nanodegree Deep RL
+
+
+## Gradient based learning
+
+- pong PPO
