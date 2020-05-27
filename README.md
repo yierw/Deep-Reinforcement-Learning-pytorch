@@ -7,22 +7,20 @@ exercises and projects originated from Udacity Nanodegree Deep RL
 
 - REINFORCE
 
-- pong-PPO
+- PPO
 
 ## Value based learning
 
 - DQN
 
-- DDQN
+- DDQN (double DQN)
 
-double DQN
-
-- Prioritized DDQN
-
-Prioritized experience replay + DDQN
+- Prioritized DDQN (Prioritized experience replay + DDQN)
 
 - Dueling DQN
 
-
-
 ## Actor-Critic learning
+
+- DDPG
+
+- A2C
