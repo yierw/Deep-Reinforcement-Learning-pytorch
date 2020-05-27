@@ -1,26 +1,3 @@
-# DRLexercises
+# DQN
 
-exercises and projects originated from Udacity Nanodegree Deep RL
-
-
-## Gradient based learning
-
-- REINFORCE
-
-- PPO
-
-## Value based learning
-
-- DQN
-
-- DDQN (double DQN)
-
-- Prioritized DDQN (Prioritized experience replay + DDQN)
-
-- Dueling DQN
-
-## Actor-Critic learning
-
-- DDPG
-
-- A2C
+![play with random selected actions](video/random_action.mp4)
