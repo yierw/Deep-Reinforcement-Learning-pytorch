@@ -1,26 +1,11 @@
-# DRLexercises
-
-exercises and projects originated from Udacity Nanodegree Deep RL
+# DQN
 
 
-## Gradient based learning
 
-- REINFORCE
+Play game with random selected actions
 
-- PPO
+![Random selected actions](video/random_action.gif)
 
-## Value based learning
+A trained agent is playing the game
 
-- DQN
-
-- DDQN (double DQN)
-
-- Prioritized DDQN (Prioritized experience replay + DDQN)
-
-- Dueling DQN
-
-## Actor-Critic learning
-
-- DDPG
-
-- A2C
+![Trained Agent](video/trained_agent.gif)

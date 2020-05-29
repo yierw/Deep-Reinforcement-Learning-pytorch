@@ -1,7 +1,5 @@
 # DRLexercises
 
-exercises and projects originated from Udacity Nanodegree Deep RL
-
 
 ## Gradient based learning
 
@@ -15,9 +13,9 @@ exercises and projects originated from Udacity Nanodegree Deep RL
 
 - DDQN (double DQN)
 
-- Prioritized DDQN (Prioritized experience replay + DDQN)
+- Dueling DDQN
 
-- Dueling DQN
+- Prioritized DDQN (Prioritized experience replay + DDQN)
 
 ## Actor-Critic learning
 
