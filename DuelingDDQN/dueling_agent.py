@@ -9,37 +9,35 @@ import torch.optim as optim
 from model import duelingNet
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-BUFFER_SIZE = int(1e5)  # replay buffer size
+
+BUFFER_SIZE = int(1e6)  # replay buffer size
 BATCH_SIZE = 64         # minibatch size
 GAMMA = 0.99            # discount factor
-TAU = 0.999             # for soft update of target parameters
-LR = 1e-3               # learning rate
-UPDATE_EVERY = 1        # how often to update the target network
-LEARN_NUM = 1
+TAU = 1e-3             # for soft update of target parameters
+LR = 5e-4               # learning rate
 
 class Agent():
-    def __init__(self, action_dim):
+    def __init__(self, action_dim, channel_dim):
         self.action_dim = action_dim
 
-        self.online_net = duelingNet(action_dim).to(device)
-        self.target_net = duelingNet(action_dim).to(device)
+        self.online_net = duelingNet(action_dim, channel_dim).to(device)
+        self.target_net = duelingNet(action_dim, channel_dim).to(device)
 
         self.optimizer = optim.Adam(self.online_net.parameters(), lr = LR)
         self.buffer = ReplayBuffer(buffer_size = BUFFER_SIZE)
 
-        self.t_step = 0 #  track online net learns
-        self.target_updates = 0 # track target net updates
+        self.t_step = 0 #  track learning
+        self.loss = 999.
 
     def act(self, state, eps = 0.):
-        state_tensor = torch.from_numpy(state).float().unsqueeze(0).to(device)
-        # select action according to online network
-        self.online_net.eval()
-        with torch.no_grad():
-            action = self.online_net(state_tensor).argmax(1).item()
-        self.online_net.train()
-
         # Epsilon-greedy action selection
         if random.random() > eps:
+            state_tensor = torch.from_numpy(state).float().unsqueeze(0).to(device)
+            # select action according to online network
+            self.online_net.eval()
+            with torch.no_grad():
+                action = self.online_net(state_tensor).argmax(1).item()
+                self.online_net.train()
             return action
         else:
             return random.choice(np.arange(self.action_dim))
@@ -50,34 +48,31 @@ class Agent():
         next_actions = self.target_net(next_states).max(1)[1].unsqueeze(1)
         next_Q = self.target_net(next_states).gather(1, next_actions)
         target = rewards + gamma * next_Q * (1-dones)
-
         prediction = self.online_net(states).gather(1, actions)
-
+        # compute loss
         loss_fn = nn.MSELoss()
         loss = loss_fn(prediction, target.detach())
-
+        self.t_step = self.t_step + 1
+        self.loss = loss.item()
+        # update critic
         self.optimizer.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm(self.online_net.parameters(), 10.)
         self.optimizer.step()
 
     def soft_update(self, model, target_model, tau):
         for target_param, param in zip(target_model.parameters(), model.parameters()):
-            target_param.data.copy_(tau*target_param.data + (1.0-tau)*param.data)
-
+            target_param.data.copy_(tau*param.data + (1.0-tau)*target_param.data)
 
     def step(self, state, action, reward, next_state, done):
         self.buffer.push(state, action, reward, next_state, done)
-
-        if len(self.buffer)> BATCH_SIZE:
-            self.t_step = self.t_step + 1
-            for _ in range(LEARN_NUM):
-                experiences = self.buffer.sample(BATCH_SIZE)
-                self.learn(experiences, GAMMA)
-
-            if (self.t_step % UPDATE_EVERY) == 0:
-                self.target_updates = self.target_updates+ 1
-                self.soft_update(self.online_net, self.target_net, TAU)
-
+        if len(self.buffer)> WARM_UP:
+            # sample a minibatch
+            experiences = self.buffer.sample(BATCH_SIZE)
+            # update critic
+            self.learn(experiences, GAMMA)
+            # soft upfate target networks
+            self.soft_update(self.online_net, self.target_net, TAU)
 
 
 class ReplayBuffer(object):
@@ -108,17 +103,17 @@ class ReplayBuffer(object):
         return len(self.memory)
 
 def preprocess_frames(frame_list, bkg_color = np.array([144, 72, 17])):
-    x = np.asarray(frame_list)[:,52:152,30:,:]-bkg_color
+    x = np.asarray(frame_list)[:,52:152,30:130,:]-bkg_color
     return np.mean(x, axis=-1)/255.
 
-#def collect_tuple(env, action, k = 4):
-#    frame_list = []
-#    reward_list = []
-#    for _ in range(k):
-#        frame, r, done, _ = env.step(action)
-#        frame_list.append(frame)
-#        reward_list.append(r)
-#
-#    reward = np.sum(reward_list)
-#    next_state = preprocess_frames(frame_list)
-#    return reward, next_state, done
+def collect_tuple(env, action, k=4):
+    frame_list = []
+    reward_list = []
+    for _ in range(k):
+        frame, r, done, _ = env.step(action)
+        frame_list.append(frame)
+        reward_list.append(r)
+
+    reward = np.sum(reward_list)
+    next_state = preprocess_frames(frame_list)
+    return reward, next_state, done

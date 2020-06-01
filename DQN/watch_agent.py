@@ -16,20 +16,6 @@ from IPython import display as ipythondisplay
 
 from DQN_agent import *
 
-def show_video():
-    mp4list = glob.glob('video/*.mp4')
-    if len(mp4list) > 0:
-        mp4 = mp4list[0]
-        video = io.open(mp4, 'r+b').read()
-        encoded = base64.b64encode(video)
-        ipythondisplay.display(HTML(data='''<video alt="test" autoplay
-                loop controls style="height: 400px;">
-                <source src="data:video/mp4;base64,{0}" type="video/mp4" />
-             </video>'''.format(encoded.decode('ascii'))))
-    else:
-        print("Could not find video")
-
-
 def wrap_env(env):
     env = Monitor(env, './video', force=True)
     return env
@@ -41,11 +27,9 @@ env.seed(1234)
 
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
-print('State shape: ', state_size)
-print('Number of actions: ', action_size)
-
 agent = Agent(state_size, action_size)
 
+# watch a trained agent
 agent.online_net.load_state_dict(torch.load('cpu_checkpoint.pth'))
 
 observation = env.reset()
@@ -53,7 +37,7 @@ observation = env.reset()
 while True:
     env.render()
     action = agent.act(observation, 0.)
-    #action = env.action_space.sample() 
+    #action = env.action_space.sample()
     observation, reward, done, info = env.step(action)
     if done:
         break
