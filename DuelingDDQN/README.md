@@ -8,11 +8,6 @@ Test environment: `Enduro-v0`
 - observation space: `Box(210, 160, 3)`
 - action space: `Discrete(9)`
 
-<<<<<<< HEAD
-=======
-Select actions randomly:
->>>>>>> c594407a641d427ff2b92713cce60e9dce2ec471
-
 Select actions randomly:
 
 ![](video/untrained.gif)
@@ -69,16 +64,12 @@ class duelingNet(nn.Module):
             nn.Linear(512,action_dim)
         )
 
-
-<<<<<<< HEAD
     def forward(self, state):
         x = self.features(state)
         v,a = self.value_layer(x), self.adv_layer(x)
         return  v - a + a.mean(dim=1).unsqueeze(1)
 ```
-=======
 A trained agent is playing the game:
->>>>>>> c594407a641d427ff2b92713cce60e9dce2ec471
 
 ## References
 [1] Z. Wang, T. Schaul, M. Hessel, H. Van Hasselt, M. Lanctot, and N. De Freitas.  Dueling network architectures for deep reinforcement learning.arXiv preprint arXiv:1511.06581, 2015.
