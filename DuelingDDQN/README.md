@@ -69,7 +69,7 @@ class duelingNet(nn.Module):
         v,a = self.value_layer(x), self.adv_layer(x)
         return  v - a + a.mean(dim=1).unsqueeze(1)
 ```
-A trained agent is playing the game:
+
 
 ## References
 [1] Z. Wang, T. Schaul, M. Hessel, H. Van Hasselt, M. Lanctot, and N. De Freitas.  Dueling network architectures for deep reinforcement learning.arXiv preprint arXiv:1511.06581, 2015.
