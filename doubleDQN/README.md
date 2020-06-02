@@ -1,4 +1,4 @@
-# double DDQN
+# double DQN
 
 This code implemented dueling network architecture [1].
 
