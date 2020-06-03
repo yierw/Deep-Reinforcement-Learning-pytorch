@@ -10,11 +10,11 @@ Test environment: `Enduro-v0`
 
 Select actions randomly:
 
-![](video/untrained.gif)
+![](videos/untrained.gif)
 
 A trained agent (dueling DDQN) is playing the game:
 
-![](video/trained2.gif)
+![](videos/trained2.gif)
 
 ### Instructions
 - option 1: play with the trained agent
@@ -69,10 +69,6 @@ class duelingNet(nn.Module):
         v,a = self.value_layer(x), self.adv_layer(x)
         return  v - a + a.mean(dim=1).unsqueeze(1)
 ```
-<<<<<<< HEAD
-=======
-
->>>>>>> 0334978cb8440b80fb49c3bdd25d1851fedc32de
 
 ## References
 [1] Z. Wang, T. Schaul, M. Hessel, H. Van Hasselt, M. Lanctot, and N. De Freitas.  Dueling network architectures for deep reinforcement learning.arXiv preprint arXiv:1511.06581, 2015.
