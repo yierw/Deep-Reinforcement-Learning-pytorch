@@ -1,28 +1,32 @@
 # DRLexercises
 
-
-## Gradient based learning
-
+Implement multiple deep RL algorithms:
 - REINFORCE
-  - play `CartPole-v0`
+  - trained agent plays `CartPole-v0`
+
+![](REINFORCE/videos/cartpole.gif)
+
+  - trained agent plays `Acrobot-v1`
+
+![](REINFORCE/videos/acrobot.gif)
 
 - PPO
   - play `PongDeterministic-v4`
-
-## Value based learning
 
 - DQN
   - play `LunarLander-v2`
 
 - DDQN
+  - play `LunarLander-v2`
   - play `Enduro-v0`
 
 - Dueling DDQN
-  - play `Enduro-v0`
+
+  - trained agent plays `Enduro-v0`
+
+  ![](DuelingDDQN/videos/trained2.gif)
 
 - Prioritized DDQN (Prioritized experience replay + DDQN)
-
-## Actor-Critic learning
 
 - DDPG
 
