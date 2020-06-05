@@ -10,7 +10,7 @@ Implement 1: `noise_reduction_1.ipynb`
 
 Trained agent plays `CartPole-v0`
 
-![](videos/cartpole.gif)
+![](video/cartpole.gif)
 
 
 Implement 1: `noise_reduction_2.ipynb`
@@ -21,4 +21,4 @@ Implement 1: `noise_reduction_2.ipynb`
 
 Trained agent plays `Acrobot-v1`
 
-![](videos/acrobot.gif)
+![](video/acrobot.gif)
