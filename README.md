@@ -5,15 +5,17 @@ Implement multiple deep RL algorithms:
 
 trained agent plays `CartPole-v0`
 
-![](REINFORCE/videos/cartpole.gif)
+![](REINFORCE/video/cartpole.gif)
 
 trained agent plays `Acrobot-v1`
 
-![](REINFORCE/videos/acrobot.gif)
+![](REINFORCE/video/acrobot.gif)
 
 - PPO
 
-play `PongDeterministic-v4`
+trained agent plays `PongDeterministic-v4`
+
+![](PPO/video/trained_PPO.gif)
 
 - DQN
 
@@ -29,10 +31,12 @@ play `Enduro-v0`
 
 trained agent plays `Enduro-v0`
 
-  ![](DuelingDDQN/videos/trained2.gif)
+![](DuelingDDQN/video/trained2.gif)
 
 - Prioritized DDQN (Prioritized experience replay + DDQN)
 
 - DDPG
+
+- D4PG
 
 - A2C

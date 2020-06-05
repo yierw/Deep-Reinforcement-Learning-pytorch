@@ -57,7 +57,7 @@ class Agent():
         # update critic
         self.optimizer.zero_grad()
         loss.backward()
-        torch.nn.utils.clip_grad_norm(self.online_net.parameters(), 10.)
+        torch.nn.utils.clip_grad_norm_(self.online_net.parameters(), 10.)
         self.optimizer.step()
 
     def soft_update(self, model, target_model, tau):
