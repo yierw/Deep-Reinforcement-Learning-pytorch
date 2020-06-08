@@ -33,7 +33,7 @@ def get_prob(policy, state, action):
     output:
         prob (tensor): prob of selecting action
     """
-    action = torch.from_numpy(action).float().to(device).view(-1,1)
+    action = torch.from_numpy(action).long().to(device).view(-1,1)
     state = torch.from_numpy(state).float().to(device)
     out = policy(state)
     prob = torch.where(action == RIGHT, out, 1.0-out)

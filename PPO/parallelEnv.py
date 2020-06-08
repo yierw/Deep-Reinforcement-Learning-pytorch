@@ -1,7 +1,7 @@
 # taken from openai/baseline
 # with minor edits
 # see https://github.com/openai/baselines/baselines/common/vec_env/subproc_vec_env.py
-# 
+#
 
 
 import numpy as np
@@ -88,7 +88,7 @@ class VecEnv(ABC):
     def render(self, mode='human'):
         #logger.warn('Render not defined for %s' % self)
         pass
-        
+
     @property
     def unwrapped(self):
         if isinstance(self, VecEnvWrapper):
@@ -127,12 +127,12 @@ class parallelEnv(VecEnv):
                  n=4, seed=None,
                  spaces=None):
 
-        env_fns = [ gym.make(env_name) for _ in range(n) ]
+        env_fns = [gym.make(env_name) for _ in range(n) ]
 
         if seed is not None:
             for i,e in enumerate(env_fns):
                 e.seed(i+seed)
-        
+
         """
         envs: list of gym environments to run in subprocesses
         adopted from openai baseline
@@ -178,7 +178,7 @@ class parallelEnv(VecEnv):
         if self.closed:
             return
         if self.waiting:
-            for remote in self.remotes:            
+            for remote in self.remotes:
                 remote.recv()
         for remote in self.remotes:
             remote.send(('close', None))

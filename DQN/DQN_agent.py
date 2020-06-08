@@ -16,25 +16,6 @@ LR = 5e-4               # learning rate
 UPDATE_EVERY = 5        # how often to update the target network
 LEARN_NUM = 1
 
-def hidden_init(layer):
-    fan_in = layer.weight.data.size()[0]
-    lim = 1. / np.sqrt(fan_in)
-    return (-lim, lim)
-
-class Actor(nn.Module):
-    def __init__(self, state_size, action_size, fc_units=256):
-        super(Actor, self).__init__()
-        self.fc1 = nn.Linear(state_size, fc_units)
-        self.fc2 = nn.Linear(fc_units, action_size)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
-        self.fc2.weight.data.uniform_(-3e-3, 3e-3)
-
-    def forward(self, state):
-        x = F.relu(self.fc1(state))
-        return F.tanh(self.fc2(x))
 
 class QNetwork(nn.Module):
     def __init__(self, state_size, action_size, hidden_size = 64):

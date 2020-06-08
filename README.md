@@ -1,7 +1,8 @@
 # DRLexercises
 
 Implement multiple deep RL algorithms:
-- REINFORCE
+
+### REINFORCE
 
 trained agent plays `CartPole-v0`
 
@@ -11,32 +12,29 @@ trained agent plays `Acrobot-v1`
 
 ![](REINFORCE/video/acrobot.gif)
 
-- PPO
+### PPO
 
 trained agent plays `PongDeterministic-v4`
 
+
 ![](PPO/video/trained_PPO.gif)
 
-- DQN
+### DQN
+
+Implement Deep Q network algorithm and some variants:
+  - DQN
+  - double DQN
+
+  - Prioritized experience replay + DQN
 
 play `LunarLander-v2`
 
-- DDQN
-
-play `LunarLander-v2`
-
-play `Enduro-v0`
-
-- Dueling DDQN
+### DuelingNet
 
 trained agent plays `Enduro-v0`
 
-![](DuelingDDQN/video/trained2.gif)
+![](DuelingNet-Enduro/video/trained2.gif)
 
-- Prioritized DDQN (Prioritized experience replay + DDQN)
+### A2C
 
-- DDPG
-
-- D4PG
-
-- A2C
+### DDPG
