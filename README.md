@@ -20,14 +20,12 @@ trained agent plays `PongDeterministic-v4`
 ![](PPO/video/trained_PPO.gif)
 
 ### DQN
+Implement Deep Q network algorithm and its variants:
+- DQN
+- double DQN
+- Prioritized experience replay + DQN
 
-Implement Deep Q network algorithm and some variants:
-  - DQN
-  - double DQN
-
-  - Prioritized experience replay + DQN
-
-play `LunarLander-v2`
+trained agent plays `LunarLander-v2`
 
 ### DuelingNet
 

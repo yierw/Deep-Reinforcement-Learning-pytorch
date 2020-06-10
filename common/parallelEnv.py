@@ -1,8 +1,9 @@
+### taken from Udacity/deep-reinforcement-learning course
+## see https://github.com/udacity/deep-reinforcement-learning/
+## comments from last author:
 # taken from openai/baseline
 # with minor edits
 # see https://github.com/openai/baselines/baselines/common/vec_env/subproc_vec_env.py
-#
-
 
 import numpy as np
 import gym
