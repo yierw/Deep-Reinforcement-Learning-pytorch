@@ -1,7 +1,7 @@
 # DQN
 
+Implement deep Q network [1] and double DQN [2].
 
-random selected actions
 
 Play game with random selected actions
 
@@ -12,13 +12,10 @@ A trained agent is playing the game
 ![Trained Agent](video/trained_agent.gif)
 =======
 
+Training tips:
+* Huber loss is more efficient than MSE loss.
 
-### implement Prioritized experience replay
+## References
+[1] V.  Mnih,  K.  Kavukcuoglu,  D.  Silver,  A.  Graves,  I.  Antonoglou,  D.  Wierstra,  and  M.  Riedmiller.Playing atari with deep reinforcement learning.arXiv preprint arXiv:1312.5602, 2013.
 
-SumTree
-
-Use while loop to update tree and retrieve leaf node
-https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/blob/master/contents/5.2_Prioritized_Replay_DQN/RL_brain.py
-
-Use recursion to update tree and retrieve leaf node
-https://github.com/jaromiru/AI-blog/blob/master/SumTree.py
+[2] H. Van Hasselt,  A. Guez,  and D. Silver.  Deep reinforcement learning with double q-learning.  InThirtieth AAAI conference on artificial intelligence, 2016.
