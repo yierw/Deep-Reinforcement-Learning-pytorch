@@ -5,22 +5,24 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from buffer import ReplayBuffer
+from per_buffer import PrioritizedBuffer
 
 def soft_update(target, source, tau):
     """ Perform soft update"""
     for target_param, param in zip(target.parameters(), source.parameters()):
         target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
 
+def huber_loss(x, y):
+    z = torch.abs(x-y).squeeze()
+    return torch.where(z < 1., 0.5*z**2, z-0.5)
 
-class Agent:
+class PERAgent():
     """
-    DQN Agent, valid for discrete actioin space
+    valid for discrete actioin space
+    implement prioritized experience replay
     """
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    #loss_fn = nn.MSELoss()
-    loss_fn = nn.SmoothL1Loss()
     iter = 0
     t_step = 0
 
@@ -49,18 +51,17 @@ class Agent:
         else:
             raise TypeError("cannot recognize algorithm")
 
-        self.buffer = ReplayBuffer(self.buffer_size, self.batch_size, self.seed)
+        self.buffer = PrioritizedBuffer(self.buffer_size, self.batch_size, self.seed)
 
         self.online_net = func(self.o_dim , self.a_dim, self.seed).to(self.device)
         self.target_net = func(self.o_dim , self.a_dim, self.seed).to(self.device)
-
         self.optimizer = optim.Adam(self.online_net.parameters(), lr = self.lr)
         self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size = self.lr_step_size, gamma = 0.1)
 
     def get_action(self, state, eps = 0.):
         # Epsilon-greedy action selection
         if random.random() > eps:
-            state_tensor = torch.FloatTensor(states).unsqueeze(0).to(self.device)
+            state_tensor = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
             # select action according to online network
             self.online_net.eval()
             with torch.no_grad():
@@ -72,8 +73,9 @@ class Agent:
 
     def update(self, experiences):
 
-        states, actions, rewards, next_states, dones = experiences
+        idxs, IS_weights, states, actions, rewards, next_states, dones = experiences
 
+        IS_weights = torch.FloatTensor(IS_weights).to(self.device)
         states = torch.FloatTensor(states).to(self.device)
         next_states = torch.FloatTensor(next_states).to(self.device)
 
@@ -93,11 +95,16 @@ class Agent:
         Q_targets = rewards + self.gamma * Q_next * (1. -dones)
         Q_expected = self.online_net(states).gather(1, actions)
         # ---------------------------- update online net ---------------------------- #
-        loss = self.loss_fn(Q_expected, Q_targets.detach())
+        #TD_errors = torch.abs(Q_expected - Q_targets.detach()).squeeze()
+        TD_errors = huber_loss(Q_expected, Q_targets.detach())
+
+        loss = torch.mean(TD_errors * IS_weights)
         self.optimizer.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.online_net.parameters(), 10.)
         self.optimizer.step()
+        # ---------------------------- update priority ---------------------------- #
+        self.buffer.update_priority(idxs, TD_errors.cpu().detach().numpy())
         # ---------------------------- update target net ---------------------------- #
         soft_update(self.target_net, self.online_net, self.tau)
 

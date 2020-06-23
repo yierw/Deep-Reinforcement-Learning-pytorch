@@ -60,7 +60,7 @@ class Agent:
     def get_action(self, state, eps = 0.):
         # Epsilon-greedy action selection
         if random.random() > eps:
-            state_tensor = torch.FloatTensor(states).unsqueeze(0).to(self.device)
+            state_tensor = torch.from_numpy(state).float().unsqueeze(0).to(self.device)
             # select action according to online network
             self.online_net.eval()
             with torch.no_grad():
