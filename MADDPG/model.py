@@ -1,45 +1,62 @@
+import random
+import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
-class CentralizedCritic(nn.Module):
-
-    def __init__(self, obs_dim, action_dim):
-        super(CentralizedCritic, self).__init__()
-
-        self.obs_dim = obs_dim
-        self.action_dim = action_dim
-
-        self.in_layer = nn.Sequential(
-            nn.Linear(self.obs_dim, 64),
-            nn.ReLU()
-        )
-
-        self.main = nn.Sequential(
-            nn.Linear(64 + self.action_dim, 64),
-            nn.ReLU(),
-            nn.Linear(64, 64),
-            nn.ReLU(),
-            nn.Linear(64, 1)
-        )
-
-    def forward(self, x, a):
-        x = self.in_layer(x)
-        xa = torch.cat((x,a), dim = 1)
-        return self.main(xa)
+def hidden_init(layer):
+    fan_in = layer.weight.data.size()[0]
+    lim = 1. / np.sqrt(fan_in)
+    return (-lim, lim)
 
 class Actor(nn.Module):
 
-    def __init__(self, obs_dim, action_dim):
+    fc1_units=256
+    fc2_units=128
+
+    def __init__(self, o_dim, a_dim, seed):
         super(Actor, self).__init__()
+        torch.manual_seed(seed)
+        self.fc1 = nn.Linear(o_dim, self.fc1_units)
+        self.fc2 = nn.Linear(self.fc1_units, self.fc2_units)
+        self.fc3 = nn.Linear(self.fc2_units, a_dim)
+        self.reset_parameters()
 
-        self.main = nn.Sequential(
-            nn.Linear(obs_dim, 64),
-            nn.ReLU(),
-            nn.Linear(64, 64),
-            nn.ReLU(),
-            nn.Linear(64, action_dim),
-            nn.Tanh()
-        )
+    def reset_parameters(self):
+        self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
+        self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
+        self.fc3.weight.data.uniform_(-3e-3, 3e-3)
 
-    def forward(self, obs):
-        return self.main(obs)
+    def forward(self, state):
+        x = F.relu(self.fc1(state))
+        x = F.relu(self.fc2(x))
+        return torch.tanh(self.fc3(x))
+
+
+class Critic(nn.Module):
+
+    fcs1_units=256
+    fc2_units=256
+    fc3_units=128
+
+    def __init__(self, o_dim, a_dim, seed):
+        super(Critic, self).__init__()
+        torch.manual_seed(seed)
+        self.fcs1 = nn.Linear(o_dim, self.fcs1_units)
+        self.fc2 = nn.Linear(self.fcs1_units + a_dim, self.fc2_units)
+        self.fc3 = nn.Linear(self.fc2_units, self.fc3_units)
+        self.fc4 = nn.Linear(self.fc3_units, 1)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.fcs1.weight.data.uniform_(*hidden_init(self.fcs1))
+        self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
+        self.fc3.weight.data.uniform_(*hidden_init(self.fc3))
+        self.fc4.weight.data.uniform_(-3e-3, 3e-3)
+
+    def forward(self, state, action):
+        xs = F.leaky_relu(self.fcs1(state))
+        x = torch.cat((xs, action), dim = 1)
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        return self.fc4(x)

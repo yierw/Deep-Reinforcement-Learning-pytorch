@@ -2,39 +2,54 @@
 
 Implement multiple deep RL algorithms:
 
-### REINFORCE
+### 1. REINFORCE
 
-trained agent plays `CartPole-v0`
+trained agent is playing `CartPole-v0`
 
 ![](REINFORCE/video/cartpole.gif)
 
-trained agent plays `Acrobot-v1`
+trained agent is playing `Acrobot-v1`
 
 ![](REINFORCE/video/acrobot.gif)
 
-### PPO
+### 2. PPO
 
-trained agent plays `PongDeterministic-v4`
+trained agent is playing `PongDeterministic-v4`
 
 
 ![](PPO/video/trained_PPO.gif)
 
-### DQN
+### 3. DQN
+
 Implement Deep Q network algorithm and double DQN
+
+trained agent is playing `LunarLander-v2`
 
 ![](DQN/video/trained_agent.gif)
 
-### perDQN
-Implement Prioritized experience replay + double DQN
-
-![](perDQN/video/MountainCar.gif)
-
-### DuelingNet
+### 4. DuelingNet
 
 trained agent plays `Enduro-v0`
 
 ![](DuelingNet/video/trained2.gif)
 
-### A2C
 
-### DDPG
+### 5. perDQN
+
+Implement Prioritized experience replay + double DQN
+
+trained agent is playing `MountainCar-v0`
+
+![](perDQN/video/MountainCar.gif)
+
+### 6. A2C
+
+in progress
+
+### 7. DDPG
+
+in progress
+
+### 8. MADDPG
+
+in progress

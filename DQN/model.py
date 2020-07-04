@@ -10,7 +10,6 @@ class QNetwork(nn.Module):
 
         self.obs_dim = obs_dim
         self.action_dim = action_dim
-
         self.seed = torch.manual_seed(seed)
 
         self.main = nn.Sequential(

@@ -9,8 +9,9 @@ class ReplayBuffer:
     def __init__(self, size = int(1e5), batch_size = 64, seed = 1234) :
         self.size = size
         self.batch_size = batch_size
-        self.seed = random.seed(seed)
         self.memory = deque(maxlen = size)
+
+        random.seed(seed)
 
     def push(self, state, action, reward, next_state, done):
         """push new experience(s) to memory"""

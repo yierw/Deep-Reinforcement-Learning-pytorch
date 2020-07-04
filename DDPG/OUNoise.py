@@ -4,10 +4,9 @@ import numpy as np
 
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
-    def __init__(self, size, scale = 1.0, mu=0., theta=0.15, sigma=0.2):
+    def __init__(self, size, mu=0., theta=0.15, sigma=0.2):
         """Initialize parameters and noise process."""
         self.size = size
-        self.scale = scale
         self.mu = mu * np.ones(self.size )
         self.theta = theta
         self.sigma = sigma
@@ -22,4 +21,4 @@ class OUNoise:
         x = self.state
         dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
         self.state = x + dx
-        return self.state * self.scale
+        return self.state

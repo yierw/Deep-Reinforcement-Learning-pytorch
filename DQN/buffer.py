@@ -15,7 +15,12 @@ class ReplayBuffer:
     def push(self, state, action, reward, next_state, done):
         """push new experience(s) to memory"""
         done_copy = done
-        done = 1 if done_copy else 0
+
+        if isinstance(done, (list, np.ndarray)):
+            done = [1 if x else 0 for x in done_copy]
+        else:
+            done = 1 if done_copy else 0
+            
         self.memory.append(self.experience(state, action, reward, next_state, done))
 
     def sample(self):

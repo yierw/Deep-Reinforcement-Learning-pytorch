@@ -3,66 +3,53 @@ import numpy as np
 from collections import namedtuple, deque
 
 class ReplayBuffer:
-    """revised replay buffer for multi agent system"""
 
     experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
 
-    def __init__(self, size = int(1e5), batch_size = 64, shared_obs = False, seed = 1234) :
+    def __init__(self, size = int(1e5), batch_size = 64, seed = 1234) :
         self.size = size
         self.batch_size = batch_size
-        self.shared_obs = shared_obs
-        self.seed = random.seed(seed)
         self.memory = deque(maxlen = size)
+
+        random.seed(seed)
 
     def push(self, state, action, reward, next_state, done):
         """push new experience(s) to memory"""
+        done_copy = done
 
-        reward_copy, done_copy = reward, done
-
-        if type(reward) is list:
-            pass
-        else:
-            n = len(action)
-            reward = [reward_copy] * n
-
-        if type(done) is list:
+        if isinstance(done, (list, np.ndarray)):
             done = [1 if x else 0 for x in done_copy]
         else:
-            n = len(action)
-            done = [1 if done_copy else 0] * n
+            done = 1 if done_copy else 0
 
         self.memory.append(self.experience(state, action, reward, next_state, done))
 
     def sample(self):
         """
-        Randomly sample a batch of experiences from memory.
-        rewards (array): (num_agent, batch_size)
-        dones (array):  (num_agent, batch_size)
-        actions_i (array): (batch_size, action_dim)
-        actions (list): [..., actions_i, ...]
+        Randomly sample a batch of experiences from the memory
 
-        shared_obs = True
-        states (array): (batch_size, state_dim)
+        states (array): (batch_size, num_agents, state_dim) if num_agents > 1
+                        (batch_size, state_dim)             if num_agents = 1
 
-        shared_obs = False
-        states_i (array): (batch_size, state_dim)
-        states (list): [..., states_i, ...]
+        actions (array): (batch_size, action_dim * num_agents)
+
+        rewards (array): (batch_size, num_agents)     if num_agents > 1
+                         (batch_size, )               if num_agents = 1
+
+        dones (array):  (batch_size, num_agents)      if num_agents > 1
+                        (batch_size, )                if num_agents = 1
+
+
         """
 
         samples = random.sample(self.memory, k = self.batch_size)
         batch = self.experience(*zip(*samples))
 
-        rewards = np.asarray(batch.reward).T
-        dones = np.asarray(batch.done).T
-
-        actions = [np.asarray(ai) for ai in zip(*batch.action)]
-
-        if self.shared_obs:
-            states = np.asarray(batch.state)
-            next_states = np.asarray(batch.next_state)
-        else:
-            states = [np.asarray(si) for si in zip(*batch.state)]
-            next_states = [np.asarray(si) for si in zip(*batch.next_state)]
+        states = np.asarray(batch.state)
+        actions = np.asarray(batch.action)
+        rewards = np.asarray(batch.reward)
+        next_states = np.asarray(batch.next_state)
+        dones = np.asarray(batch.done)
 
         return (states, actions, rewards, next_states, dones)
 
