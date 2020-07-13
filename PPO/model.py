@@ -5,10 +5,8 @@ class Policy(nn.Module):
     def __init__(self):
         super(Policy, self).__init__()
         self.main= nn.Sequential(
-            # (:,2,80,80) to (:,4,38,38)
             nn.Conv2d(2, 4, kernel_size=6, stride=2, bias=False),
             nn.ReLU(inplace = True),
-            # (:,4,38,38) to (:,16,9,9)
             nn.Conv2d(4, 16, kernel_size=6, stride=4),
             nn.ReLU(inplace = True),
             nn.Flatten(),

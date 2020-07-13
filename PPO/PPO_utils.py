@@ -23,7 +23,6 @@ def get_action(policy, state):
     prob = np.where(action == RIGHT, out, 1.0-out)
     return action, prob
 
-
 def get_prob(policy, state, action):
     """
     input:
