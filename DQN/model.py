@@ -3,11 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class QNetwork(nn.Module):
-    def __init__(self, obs_dim, a_dim, h_dim = 64, seed = 1234):
+    def __init__(self, o_dim, a_dim, h_dim = 64):
         super().__init__()
-
-        torch.manual_seed(seed)
-
         self.main = nn.Sequential(
             nn.Linear(o_dim, h_dim),
             nn.ReLU(),
@@ -17,43 +14,34 @@ class QNetwork(nn.Module):
         )
 
     def forward(self, state):
-        x = self.main(state)
         return self.main(state)
 
 
 class ConvBase(nn.Module):
-
-    def __init__(self, c_dim, seed):
+    """
+    used for Atari games
+    """
+    def __init__(self, c_dim):
         super().__init__()
-
-        torch.manual_seed(seed)
-
-        self.conv1 = nn.Conv2d(c_dim, 32, kernel_size=8, stride = 4)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size = 4, stride = 2)
-        self.conv3 = nn.Conv2d(64, 64, kernel_size = 3, stride = 1)
+        self.conv1 = nn.Conv2d(c_dim, 16, kernel_size = 8, stride = 4, bias = False)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size = 4, stride = 2)
+        #(:, 32, 8, 8)
 
     def forward(self, state):
         x = F.relu(self.conv1(state))
         x = F.relu(self.conv2(x))
-        x = F.relu(self.conv3(x))
-        out = x.view(-1, 2304) # 64 * 6 * 6
-        return  out
+        return  x.view(-1, 2048) 
 
 class ConvQNet(nn.Module):
-    def __init__(self, c_dim, a_dim, seed = 1234):
+    def __init__(self, c_dim, a_dim):
         super().__init__()
-
-        torch.manual_seed(seed)
-
-        self.features = ConvBase(c_dim, seed)
-
+        self.features = ConvBase(c_dim)
         self.fc_layer = nn.Sequential(
-            nn.Linear(2304, 512),
+            nn.Linear(2048, 256),
             nn.ReLU(),
-            nn.Linear(512, a_dim)
+            nn.Linear(256, a_dim)
         )
 
     def forward(self, state):
         x = self.features(state)
-        q = self.fc_layer(x)
-        return q
+        return self.fc_layer(x)

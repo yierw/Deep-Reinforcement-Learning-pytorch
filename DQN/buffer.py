@@ -6,10 +6,9 @@ class ReplayBuffer:
 
     experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
 
-    def __init__(self, size = int(1e5), batch_size = 64, seed = 1234) :
+    def __init__(self, size = int(1e5), batch_size = 64) :
         self.size = size
         self.batch_size = batch_size
-        self.seed = random.seed(seed)
         self.memory = deque(maxlen = size)
 
     def push(self, state, action, reward, next_state, done):

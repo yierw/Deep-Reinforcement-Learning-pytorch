@@ -20,9 +20,9 @@ class DQNAgent:
     #loss_fn = nn.MSELoss()
     loss_fn = nn.SmoothL1Loss()
     iter = 0
-
-    def __init__(self, net, o_dim, a_dim, lr = 1e-4, lr_decay_step = 40, batch_size = 64,
-                 gamma = 0.99, tau = 0.001, buffer_size = int(1e5), seed = 1234, algorithm = "ddqn"):
+    
+    def __init__(self, net, o_dim, a_dim, lr = 1e-3, batch_size = 16, algorithm = "ddqn",
+                 gamma = 0.99, tau = 1e-3, buffer_size = int(1e6)):
         """
         o_dim: observation space dim (or # of channels)
         a_dim: action space dimension
@@ -30,12 +30,10 @@ class DQNAgent:
         self.o_dim = o_dim
         self.a_dim = a_dim
         self.lr = lr
-        self.lr_decay_step = lr_decay_step
         self.batch_size = batch_size
         self.gamma = gamma
         self.tau = tau
         self.buffer_size = buffer_size
-        self.seed = seed
 
         if algorithm.lower() in ("dqn"):
             self.algorithm = "dqn"
@@ -44,25 +42,24 @@ class DQNAgent:
         else:
             raise TypeError("cannot recognize algorithm")
 
-        self.buffer = ReplayBuffer(buffer_size, batch_size, seed)
+        self.buffer = ReplayBuffer(buffer_size, batch_size)
 
-        self.online_net = net(o_dim , a_dim, seed).to(self.device)
-        self.target_net = net(o_dim , a_dim, seed).to(self.device)
+        self.online_net = net(o_dim , a_dim).to(self.device)
+        self.target_net = net(o_dim , a_dim).to(self.device)
 
         self.optimizer = optim.Adam(self.online_net.parameters(), lr = lr)
-        self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size = lr_decay_step, gamma = 0.1)
 
     def get_action(self, state, eps = 0.):
         """ Epsilon-greedy action selection """
-
+        
         if random.random() > eps:
             state_tensor = torch.FloatTensor(state).unsqueeze(0).to(self.device)
-
+            
             self.online_net.eval()
             with torch.no_grad():
                 action = self.online_net(state_tensor).argmax(1).item()
             self.online_net.train()
-
+            
             return action
         else:
             return random.choice(np.arange(self.a_dim))
@@ -77,7 +74,7 @@ class DQNAgent:
         actions = torch.LongTensor(actions).view(-1, 1).to(self.device)
         rewards = torch.FloatTensor(rewards).view(-1, 1).to(self.device)
         dones = torch.FloatTensor(dones).view(-1, 1).to(self.device)
-
+        
         if self.algorithm == "ddqn":
             max_actions = self.online_net(next_states).max(1)[1].view(-1, 1)
             Q_next = self.target_net(next_states).gather(1, max_actions)
@@ -89,7 +86,7 @@ class DQNAgent:
 
         Q_targets = rewards + self.gamma * Q_next * (1. -dones)
         Q_expected = self.online_net(states).gather(1, actions)
-
+        
         loss = self.loss_fn(Q_expected, Q_targets.detach())
 
         self.optimizer.zero_grad()

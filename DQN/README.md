@@ -1,18 +1,27 @@
 # DQN
 
-Implement deep Q network [1] and double DQN [2].
+![Trained Agent](video/LunarLander.gif)
+
+This code implemented deep Q network [1] and double DQN [2].
+
+### Instructions
+* `buffer.py` stores transitions collected at each step and reuse them for training
+* `model.py` defines the network architecture
+* `agent.py` defines (double) DQN agent
+
+Option 1: watch a trained agent
+```python
+python3 watch.py
+```
+Option 2: follow the instructions in `notebook/solve_LunarLander.ipynb` to train your agent
+
+### Implement Details
+The two key elements in DQN algorithm are: replay buffer and target network. The former decorrelates the experience tuples and the latter solves the moving target problem.
+
+In DQN algorithm, the next action used for evaluating the target Q value is chosen from the target network. This manner, however, is believed to result in overestimation. In double DQN algorithm, the next action is chosen from the online network, so the noise in selecting action and evaluating value is decorrelated.
 
 
-Play game with random selected actions
-
-![Random selected actions](video/random_action.gif)
-
-A trained agent is playing the game
-
-![Trained Agent](video/trained_agent.gif)
-=======
-
-Training tips:
+### Tips:
 * Huber loss is more efficient than MSE loss.
 
 ## References
