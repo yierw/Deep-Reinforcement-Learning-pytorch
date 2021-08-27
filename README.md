@@ -18,3 +18,4 @@ Implement multiple deep RL algorithms:
 * NoisyNet: in progress
 * DDPG: in progress
 * MADDPG: in progress
+* TEST
